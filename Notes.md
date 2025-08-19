@@ -65,6 +65,8 @@
 - so when you want to communicate or ssh, do not use this loopback address (ig)
 - 10, 142, 192, 172, 
 - so you have these group people who set standards to IP and the Internet 
+- get geo location from: https://www.maxmind.com/en/geoip-web-services-demo
+
 
 ## traceroute
 
@@ -96,3 +98,53 @@
 - why are there more than three domains hosted on the same IP Address
 - dns is round robin, for load balancing, so there may be different Domain Names for the same IP Address
 - for load balancing ip can share it self 
+
+## Wireshark
+
+- is only a measurement tool 
+- cannot detect suspicious activity directly to the eye, but can use it for analysis purposes
+- it cannot send out or disrupt/corrupt data
+- if the machine supports some mem management and security management, then wiresharks can mostly be used on them.
+- compulsory: 500 MB RAM and 500MB Disk space, just in case caputures are pretty high
+- the length capture (idt can be limited by a mere human) depends on the amount of trafiic that you are surrounded with. For more traffic wireshark demands for more amount of space
+- doc for wireshar: https://www.wireshark.org/docs/wsug_html_chunked/ChIntroDownload.html
+- eth0 for ethernet as a medium and wlan0 for wifi
+
+- websites to visit: http://www.httpvshttps.com
+    - clear browser and dns cache before starting out
+    - type in the browser: about:networking#dns
+
+- tcpdump: https://medium.com/@packetnaut/deeper-dive-dns-query-and-response-with-wireshark-and-tcpdump-with-hex-offsets-f30a2046779f
+- $-l$ for output line buffer, for ease of transfer to the other commands (flush)
+- UDP is another protocol like TCP
+- wireshark can display name only related to the DNS protocol
+- this is the wifi interface:wlxdc627966b656
+- mentions the port to port transfer
+- wireshark denotes everything that happens on the interface
+
+## User Datagram Protocol 
+
+- Used to transfer data in high speed
+- tco does a handshake before establishing connectin
+- udp directly starts sending out data
+- udp does not check the proper arrival of the data, tcp does
+- it is very linient in every terms, can use for high speed data transfer at limited capacity of wire (data reate)
+- if udp datagram is lost in the transit, the reciever would not no it
+- spotify works over udp, becauuse small data transfers are ok for them
+
+## TCP
+
+- in a single TCP connections you have multiple http connections
+- udp and tcp are transferring things, whereas http 
+- tcp manages the big connections
+HTTP (Application Layer)    HTTP (Application Layer)
+         |                              |
+        TCP -------------------------- TCP 
+           (this establishes connection)
+- so you build a port throigh which you can make transfers
+
+
+## wrt to assignment queries:
+
+- reponse request = udp.stream==0
+- number of http request = http.request
