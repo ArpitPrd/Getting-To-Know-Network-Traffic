@@ -11,3 +11,9 @@
 - how is the latency related to everything here
 - how protocol come to play while pinging servers
 - why are there so many protocols
+
+## Day 3
+
+- Have to get the first version done today, by any means
+- have to start working on BTP asap 
+- Will give 5 H to this
