@@ -90,6 +90,7 @@
 - difference is that ethernet is cabled and wifi is not cabled
 - sudo apt net-tools for all the network tools such as ipconfig, ifconf
 - \- is converted to _ in parser.parse_args().<can use _ here>
+- chatgpt blends with convos, but google searches are rigid
 
 ## Submission
 
@@ -158,7 +159,37 @@ HTTP (Application Layer)    HTTP (Application Layer)
         TCP -------------------------- TCP 
            (this establishes connection)
 - so you build a port throigh which you can make transfers
+- the assurance of having data reliability loosens the constraint of programmer having to write data transfer codes (or any such relibility codes or communication safeguard softwares) whatsoever
+- TCP can tranfer continuous 8 bit octets in both direcctions by packaging some number of bytes into segs for transmission across the internet system
+- in general TCP decides when to block and allow packets in its own convienice
+- TCP must be able to recover data that is lost, duplicated, damaged, out of order by the internet.
+- Handles all this by attaching numbers to packets and recieving ACK from reciever.
+- if ACK is not recieved in the time out interval, the data is retransmitted
+- TCP time-out value is determined dynamically for each system, based on its round trip times
+- the sequence numbers may be used order the packets and eliminate dups
+- Checksum, ensures no damage, by checking them at the reciever and sending RETRANMSIT signal 
+- TCP send the window with ACK, to communicate the range of acceptable sequence. This indicates the Sender the allowed number of octets that the sender might send until further NOTICE
+- TCP must initialise and maintain a certain status information 
+- a connection = status information + sockets + sequence numbers + window sizes
+- each connection uniquly identified by a pair of sockets on each side
+- we may specify the TCP with security and precendence information 
+- sequence number keeps track of every byte sent out of the host
+- acknowlwdmwnt number is a track for every byte that has been recvcieved 
+- the local hosts sequence number usually matches the remote hosts ack number
+- local hosts ack number usually matches the remote hosts sequenne number
 
+seq 1000
+ack 1000
+
+
+seq 1000
+ack 1000
+
+- if running on the same IP Address, the port directs the information to a specific application program
+- httpvshttps runs on the same ip address, once data encapsulation is recieved from the lower levels this sent out the application layer by checking the port if it is 80 sends to HTTP other wise 430 then HTTPS
+- adheres to the fact of keeping the network to be dumb and end hosts to be smart
+- retransmissions can be found, if wither A != S + L
+- TCP sends out updated ack num
 
 ## wrt to assignment queries:
 
@@ -194,3 +225,42 @@ HTTP (Application Layer)    HTTP (Application Layer)
 
 - DNS resolution is done using UDP
 - Data Tramnsfer (more secire) done using TCP
+
+- ehternet class captures the hardware aspects
+- ip class captures the IP rules
+- tcp class captures the tcp rules
+- dpkt is very less documented
+- reader is a dump, packet data length of each record 
+- ts, buf this is the length of the record
+- use the dpkt class to have the buf parsed into more freinfly python objects sort of technique, which is dpkt.ethernet.Ethernet in this case only, you may find other according to requirement
+- eth decodes both IP and TCP layer information as well, parses higher layer protocols
+- when printed:
+Ethernet(src='\x00\x1a\xa0kUf' (MAC), dst='\x00\x13I\xae\x84,' (MAC), data=IP(src='\xc0\xa8\n\n', off=16384, dst='C\x17\x030', sum=25129, len=52, p=6, id=51105, data=TCP(seq=9632694, off_x2=128, ack=3382015884, win=54, sum=65372, flags=17, dport=80, sport=56145)))
+- src: Source MAC address
+- dst: destination MAC Address
+- data: Encapsulated in IP Object
+
+
+IP(src='\xc0\xa8\n\n', off=16384, dst='C\x17\x030', sum=25129, len=52, p=6, id=51105, data=TCP(seq=9632694, off_x2=128, ack=3382015884, win=54, sum=65372, flags=17, dport=80, sport=56145))
+- src: source IP Address
+- dst: destination IP Address
+- len: length of the packet
+- p: (not sure)
+- id: unique identification of the packet, during the conversation
+- data: Encapsulated TCP message
+
+TCP(seq=9632694, off_x2=128, ack=3382015884, win=54, sum=65372, flags=17, dport=80, sport=56145)
+- seq: specifies the sequence number of the first byte of data
+- off_x2: specifies the off set of the data portion in the segment
+- ack: Identiffies the portion of the highest block recieved 
+- win: specifies the amount of data the destination is willing to recieve
+- sum: checksum, verifying the intergrity of the packet
+- flags: Identify the segments valid
+- dport: destination port of TCP Header, identifies port in the Application Program
+- sport: source port of TCP Header, remmemeber that this was header, identifies port in the source Application Program
+
+- Ethernet class has this speacial property, of having parsed the data of higher levels of the protocol stack. This actually quite useful. All of this is obtained from the read buffer
+- Ethernet class, by the name atleast seems to be philosihically designed for the needs to understand the hardware.
+- As information passes through the layers, we can keep peeling of the higher encapsulations: Peel Ethernet you get IP, peel IP you get TCP. Very nice encapsulations. Eventually it is just the data, and is used by the Application Layer
+- For RTT calculation, associate the acknowledgment with the data packet whose sequence number S satisfies: A = S + L, where A is the acknowledgment number and L is the size (in bytes) of the data packet
+3382015884 = 9632694 + 
