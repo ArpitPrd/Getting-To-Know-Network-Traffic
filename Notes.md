@@ -83,10 +83,22 @@
 - find the asn from whois -h whois.cymru.com " -v 172.217.26.36"
 - DHCP is intended for information availability for the client to have all informaation about the servers
 - wak return exit status
+- int.to_bytes(): https://docs.python.org/3/library/stdtypes.html (search bytes for more operation)
+- int.bit_count(): number of ones
+- int.from_bytes()
+- ethernet is also the source through which we can get the wifi analysis in libpcap
+- difference is that ethernet is cabled and wifi is not cabled
+- sudo apt net-tools for all the network tools such as ipconfig, ifconf
+- \- is converted to _ in parser.parse_args().<can use _ here>
 
 ## Submission
 
 - python traffic_analysis.py --file <filename.pcap> --client --server --throughput --up
+- my ip
+- ip address for http://www.httpvshttps.com/: 45.33.7.16
+- for https://www.httpvshttps.com/: 45.33.7.16, 35.199.147.118
+- my ip: 10.184.4.205
+- they are the same because http is an application level protocol and is does not affect the dns lookup, becuase what matters is the domain name, that establishes connection in the link layer, which is determined by the last three words in domain. what protocol is being used does not change the server, hence the ip
 
 ## DNS
 
@@ -98,6 +110,7 @@
 - why are there more than three domains hosted on the same IP Address
 - dns is round robin, for load balancing, so there may be different Domain Names for the same IP Address
 - for load balancing ip can share it self 
+- dns lookups from here: https://www.nslookup.io/website-to-ip-lookup/
 
 ## Wireshark
 
@@ -121,6 +134,9 @@
 - this is the wifi interface:wlxdc627966b656
 - mentions the port to port transfer
 - wireshark denotes everything that happens on the interface
+- can caputure from different types of network hardware
+- can capture from more than one interface simulatanroulsy
+- can capture from USB also (amazing)
 
 ## User Datagram Protocol 
 
@@ -148,3 +164,33 @@ HTTP (Application Layer)    HTTP (Application Layer)
 
 - reponse request = udp.stream==0
 - number of http request = http.request
+
+
+## Issues faced
+
+- pcapng is not supported by libpcap, convert it to pcap either by using save-as, or follow this link: https://stackoverflow.com/questions/23523524/dpkt-invalid-tcpdump-header-error
+
+
+## dpkt
+
+- Use this to learn about dpkt.pcap: https://dpkt.readthedocs.io/en/latest/api/api_auto.html#module-dpkt.pcap
+- reads all the packets, and stores them in some format, you may iterate over them, check traffic_analysis.py
+- wireshark converts the image to used by other softwares, they may use this over and agin 
+- pcap is one such file that can be operated upon by libpcap, pcap is a generally accepted format (protocol) of storing the way things are supposed to be stored
+- there is some magic number on the top of pcap files, maybe to get protocol
+- have to use ip to address the src and dst
+- ip data -> tcp data 
+- eth.src provides the mac address of the computer. 6bytes. 6bytes addressing mostly it is the mac address of the computer
+- data has been buffered in the file, and can be used for information extraction about almost everything, including ethernet information, tcp informaiton, udp information and everything else.
+
+- IP was derieved from the dpkt.Packet, so this some sort of modelling of the packet along with additional information, that includes information such as the soucre ip, dest ip.
+- you can also pack and unpack, the packet to remove the header notifs
+
+- also implemets various other checkers, like checksum, overflows, etc.. (can check myenv/lib/python3.12/site-packages/dpkt/dpkt.py)
+
+- found something called vlan, which is virtual LAN, used for logical assignemnt of network devices centrally controlled by a switch
+
+- this is a packet with more hanging informaiton dpkt.ip.IP
+
+- DNS resolution is done using UDP
+- Data Tramnsfer (more secire) done using TCP
