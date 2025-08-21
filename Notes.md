@@ -95,11 +95,11 @@
 ## Submission
 
 - python traffic_analysis.py --file <filename.pcap> --client --server --throughput --up
-- my ip
 - ip address for http://www.httpvshttps.com/: 45.33.7.16
-- for https://www.httpvshttps.com/: 45.33.7.16, 35.199.147.118
-- my ip: 10.184.4.205
+- for https://www.httpvshttps.com/: 45.33.7.16, 151.101.208.157, 2404:6800:4003:c0f::9c, 2600:3c00::f03c:91ff:fe28:3acc
+- my ip: 10.184.4.205, 2001:df4:e000:3fd1::b3ab
 - they are the same because http is an application level protocol and is does not affect the dns lookup, becuase what matters is the domain name, that establishes connection in the link layer, which is determined by the last three words in domain. what protocol is being used does not change the server, hence the ip
+- before submitting make sure to remove the hack to identify s
 
 ## DNS
 
@@ -112,6 +112,7 @@
 - dns is round robin, for load balancing, so there may be different Domain Names for the same IP Address
 - for load balancing ip can share it self 
 - dns lookups from here: https://www.nslookup.io/website-to-ip-lookup/
+- to clear dns cache use: about:networking#dns
 
 ## Wireshark
 
@@ -138,6 +139,10 @@
 - can caputure from different types of network hardware
 - can capture from more than one interface simulatanroulsy
 - can capture from USB also (amazing)
+- underlging software is dumpcap
+- dumpcap --interface wlxcd... -F pcap -w http.pcap
+- capinfo may be used for filtering data
+- capinfo <file> -i for kbps of data (more infor here:https://www.wireshark.org/docs/wsug_html_chunked/AppToolscapinfos.html)
 
 ## User Datagram Protocol 
 
@@ -177,6 +182,7 @@ HTTP (Application Layer)    HTTP (Application Layer)
 - acknowlwdmwnt number is a track for every byte that has been recvcieved 
 - the local hosts sequence number usually matches the remote hosts ack number
 - local hosts ack number usually matches the remote hosts sequenne number
+- may contain ranges indicating the start and the end byte. Ack contains informaation for the next packet
 
 seq 1000
 ack 1000

@@ -17,3 +17,7 @@
 - Have to get the first version done today, by any means
 - have to start working on BTP asap 
 - Will give 5 H to this
+
+## Day 4
+
+- need to get the throughput correct, becaause it seems to be wrong
