@@ -97,9 +97,11 @@
 - python traffic_analysis.py --file <filename.pcap> --client --server --throughput --up
 - ip address for http://www.httpvshttps.com/: 45.33.7.16
 - for https://www.httpvshttps.com/: 45.33.7.16, 151.101.208.157, 2404:6800:4003:c0f::9c, 2600:3c00::f03c:91ff:fe28:3acc
-- my ip: 10.184.4.205, 2001:df4:e000:3fd1::b3ab
+- my ip: 10.184.13.134, 2001:df4:e000:3fd1::b3ab
 - they are the same because http is an application level protocol and is does not affect the dns lookup, becuase what matters is the domain name, that establishes connection in the link layer, which is determined by the last three words in domain. what protocol is being used does not change the server, hence the ip
 - before submitting make sure to remove the hack to identify s
+
+- need to check the slight peek in upload?
 
 ## DNS
 

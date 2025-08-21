@@ -15,6 +15,19 @@ def get_pcap_from_file(filename:str)-> any:
 
     return pcap
 
+def get_ip_from_bytes(ip_bytes: bytes) -> str:
+    """
+    Convert an IP address in bytes to its string form.
+    Automatically detects IPv4 vs IPv6.
+    """
+    if len(ip_bytes) == 4:   # IPv4 is 4 bytes
+        return socket.inet_ntop(socket.AF_INET, ip_bytes)
+    elif len(ip_bytes) == 16:  # IPv6 is 16 bytes
+        return socket.inet_ntop(socket.AF_INET6, ip_bytes)
+    else:
+        raise ValueError(f"Invalid IP length {len(ip_bytes)} (expected 4 for IPv4 or 16 for IPv6)")
+    
+
 def get_bytes_from_ip(ip_addr: str) -> bytes:
     """
     Convert an IP address (IPv4/IPv6) to its packed binary form.
@@ -45,7 +58,8 @@ def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str
     and anything that has been recieved by the client as download
     """
     print(pcap_filename)
-    bin_size = 0.5
+    cnt = 0
+    bin_size = 1
     ipv4 = is_ipv4(client_ip)
     client_ip_bytes = get_bytes_from_ip(client_ip)
     server_ip_bytes = get_bytes_from_ip(server_ip)
@@ -60,11 +74,11 @@ def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str
             if start_time_stamp is None:
                 start_time_stamp = time_stamp
 
-            time_duration = int((time_stamp - start_time_stamp)//bin_size * bin_size)
+            rel_time = int((time_stamp - start_time_stamp)//bin_size * bin_size)
             
             # initial assignment
-            if time_duration not in clock_thpt_dict:
-                clock_thpt_dict[time_duration] = 0
+            if rel_time not in clock_thpt_dict:
+                clock_thpt_dict[rel_time] = 0
             
             
             eth = dpkt.ethernet.Ethernet(buffered_data)
@@ -79,31 +93,27 @@ def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str
             
             dst = ip_data.dst
             src = ip_data.src
-            if (not is_ipv4(src)):
-                print("ipv6")
+
             tcp_data = ip_data.data 
             
             if not isinstance(tcp_data, dpkt.tcp.TCP): # may be udp, need to check
                 continue
-            
-            # filters server traffic
-            if src!=server_ip_bytes and dst!=server_ip_bytes: 
-                # print(src, server_ip_bytes)
-                continue
 
             # need to check all the uploads happening in the tcp connection created between the server and my computer
             if do_upload:
-                if src==client_ip_bytes:
-                    clock_thpt_dict[time_duration] += len(tcp_data)
-                    print(f"update:{clock_thpt_dict[time_duration]}")
+                if src==client_ip_bytes and dst==server_ip_bytes:
+                    cnt += 1
+                    clock_thpt_dict[rel_time] += len(tcp_data)
             # need to check all the uploads happening in the tcp connection created between the server and my computer
             else:
-                if dst==client_ip_bytes: 
-                    clock_thpt_dict[time_duration] += len(tcp_data)
+                # print(dst, client_ip_bytes)
+                if dst==client_ip_bytes and src==server_ip_bytes: 
+                    cnt += 1
+                    clock_thpt_dict[rel_time] += len(tcp_data)
 
-    # print(clock_thpt_dict)
+    print(f"number of loads: {cnt}")
     bins = sorted(clock_thpt_dict.keys())
-    values = [ (clock_thpt_dict[b] * 8) / (bin_size * 1e3) for b in bins ]  # kbps
+    values = [ (clock_thpt_dict[b] * 8) / (bin_size * 1e6) for b in bins ]  # kbps
     return list(bins), list(values)
 
 def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str) -> tuple[list]:
@@ -124,10 +134,10 @@ def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str)
             if start_time is None:
                 start_time = time_stamp
             
-            time_duration = time_stamp - start_time
+            rel_time = time_stamp - start_time
 
-            if time_duration not in clock_rtt_dict:
-                clock_rtt_dict[time_duration] = 0
+            if rel_time not in clock_rtt_dict:
+                clock_rtt_dict[rel_time] = 0
             
             eth = dpkt.ethernet.Ethernet(buffered_data)
 
@@ -147,12 +157,12 @@ def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str)
             
             if src==client_ip_bytes and dst==server_ip_bytes:
                 key = tcp_data.seq + len(tcp_data.data)
-                to_ack[key] = time_duration
+                to_ack[key] = rel_time
                 
             elif src==server_ip_bytes and dst==client_ip_bytes:
                 key = tcp_data.ack
                 if key in to_ack:
-                    clock_rtt_dict[time_duration] = time_duration - to_ack[key]
+                    clock_rtt_dict[rel_time] = rel_time - to_ack[key]
     print(f"number of rtts recorded: {len(clock_rtt_dict)}")
     return list(clock_rtt_dict.keys()), list(clock_rtt_dict.values())
 
@@ -160,7 +170,6 @@ def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str)
 def plot(x: list[float], y: list[float], xlabel: str, ylabel: str, label: str, title: str, save_loc: str, window_start: float = 3.0, window_length:float=1e9) -> None:
     """
     General purpose plotter.
-    Adds a subplot zoomed into a 1-second window [window_start, window_start+1).
     """
     x_window, y_window = [], []
     for xi, yi in zip(x, y):
@@ -193,6 +202,7 @@ if __name__ == '__main__':
     parser.add_argument("--down", action="store_true", help="perform downloads")
     parser.add_argument("--file", type=str, help="pcap file name")
     parser.add_argument("--version", type=str, default="", help="enter verison")
+    parser.add_argument("--safe", action="store_true", help="if https")
     args = parser.parse_args()
     client_ip = args.client
     server_ip = args.server
@@ -202,6 +212,7 @@ if __name__ == '__main__':
     do_rtt = args.rtt
     pcap_filename = args.file
     v = args.version
+    ipv6 = args.safe
     print(f"""
         client_ip = {args.client}
         server_ip = {args.server}
@@ -210,34 +221,30 @@ if __name__ == '__main__':
         do_download = {args.down}
         do_rtt = {args.rtt}
         version = {args.version}
+        ipv6 = {args.safe}
     """)
 
     if do_thpt:
         x, y =perform_thpt(client_ip, server_ip, do_upload, pcap_filename)
-        y = [i * 8 for i in y] # for bits conversion from bytes
     
     else:
         x, y = perform_rtt(client_ip, server_ip, True, pcap_filename)
 
-    # Plotting, can be made more effi
-    is_s = False
-    for l in pcap_filename: 
-        if l=="s": is_s = True
 
     if do_thpt:
         if do_upload:
-            save_loc = f"up_throughput{"_s" if is_s else ""}{v}.png"
-            title = f"Upload Throughput in 1 sec window (http{"s" if is_s else ""})"
+            save_loc = f"up_throughput{"_s" if ipv6 else ""}{v}.png"
+            title = f"Upload Throughput (http{"s" if ipv6 else ""})"
             ylabel = "Upload Throughput in bits per sec"
             label = "Upload"
         else:
-            save_loc = f"down_throughput{"_s" if is_s else ""}{v}.png"
-            title = f"Download Throughput in 1 sec window (http{"s" if is_s else ""})"
+            save_loc = f"down_throughput{"_s" if ipv6 else ""}{v}.png"
+            title = f"Download Throughput (http{"s" if ipv6 else ""})"
             ylabel = "Download Throughput in bits per sec"
             label = "Download"
     if do_rtt:
-        save_loc = f"rtt{"_s" if is_s else ""}{v}.png"
-        title = f"RTT (http{"s" if is_s else ""})"
+        save_loc = f"rtt{"_s" if ipv6 else ""}{v}.png"
+        title = f"RTT (http{"s" if ipv6 else ""})"
         ylabel = "RTT"
         label = "RTT"
 
