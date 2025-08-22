@@ -93,7 +93,7 @@ def is_ipv4(ip: str) -> bool:
     """
     return isinstance(ipaddress.ip_address(ip), ipaddress.IPv4Address)
 
-def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str) -> tuple[list]:
+def perform_thpt(client_ip:str, server_ip:str, pcap_filename:str, do_upload:bool) -> tuple[list]:
     """
     performs thpt analysis and reutrns the time and thpt variation
 
@@ -161,113 +161,78 @@ def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str
     values = [ (clock_thpt_dict[b] * 8) / (bin_size * 1e6) for b in bins ]  # kbps
     return list(bins), list(values)
 
-def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str) -> tuple[list]:
+
+def perform_rtt(client_ip: str, server_ip: str, pcap_file: str, do_upload:bool=False):
     """
-    performs rtt analysis and return time and rtt variation
+    Measure RTTs in a TCP stream based on ACK reception.
+
+    Args:
+        pcap_file: Path to pcap file.
+        client_ip: Client (sender) IP.
+        server_ip: Server (receiver) IP.
+
+    Returns:
+        times: list of timestamps (relative to start) when RTT measured
+        rtts:  list of RTTs in milliseconds
     """
-    if verbose: print(f"working with: client_ip: {client_ip}, server_ip: {server_ip} and pcap_filename: {pcap_filename}")
-    ipv4 = is_ipv4(client_ip)
     client_ip_bytes = get_bytes_from_ip(client_ip)
     server_ip_bytes = get_bytes_from_ip(server_ip)
-    clock_rtt_dict = {}
-    to_ack = {}
-    with open(pcap_filename, 'rb') as f:
+
+    times, rtts = [], []
+    unacknowledged_messages = {}   # seq_num -> (send_time, data_len)
+
+    start_time = None
+    ipv4 = is_ipv4(client_ip)
+    with open(pcap_file, "rb") as f:
         pcap = dpkt.pcap.Reader(f)
 
-        start_time = None
         for time_stamp, buffered_data in pcap:
             if start_time is None:
                 start_time = time_stamp
-            
-            rel_time = time_stamp - start_time
+            rel_ts = time_stamp - start_time
 
-            if rel_time not in clock_rtt_dict:
-                clock_rtt_dict[rel_time] = 0
+            eth_data = dpkt.ethernet.Ethernet(buffered_data)
             
-            eth = dpkt.ethernet.Ethernet(buffered_data)
-
             if ipv4:
-                if not isinstance(eth.data, dpkt.ip.IP): continue
+                if not isinstance(eth_data.data, dpkt.ip.IP):
+                    continue
             else:
-                if not isinstance(eth.data, dpkt.ip6.IP6): continue
+                if not isinstance(eth_data.data, dpkt.ip6.IP6):
+                    continue
             
-            ip_data = eth.data
-
-            if not isinstance(ip_data.data, dpkt.tcp.TCP): continue
+            ip_data = eth_data.data
+            
+            if not isinstance(ip_data.data, dpkt.tcp.TCP):
+                continue
 
             tcp_data = ip_data.data
 
             src = ip_data.src
             dst = ip_data.dst
-            
+
+            seq = tcp_data.seq
+            ack = tcp_data.ack
+
+            # sending packet
             if src==client_ip_bytes and dst==server_ip_bytes:
-                key = tcp_data.seq + len(tcp_data.data)
-                to_ack[key] = rel_time
-                
+                if len(tcp_data.data) > 0:
+                    if seq not in unacknowledged_messages:  # first transmission only
+                        unacknowledged_messages[seq] = (time_stamp, len(tcp_data.data))
+
+            # receiving packet
             elif src==server_ip_bytes and dst==client_ip_bytes:
-                key = tcp_data.ack
-                if key in to_ack:
-                    clock_rtt_dict[rel_time] = rel_time - to_ack[key]
-    if verbose: print(f"number of rtts recorded: {len(clock_rtt_dict)}")
-    return list(clock_rtt_dict.keys()), list(clock_rtt_dict.values())
+                # Check which seqs are being acknowledged
+                to_remove = []
+                for seq, (send_time, length) in unacknowledged_messages.items():
+                    if ack>=seq+length:  # data fully acknowledged, from the messages that were seen previously
+                        rtt = (time_stamp - send_time)
+                        times.append(rel_ts)
+                        rtts.append(rtt)
+                        to_remove.append(seq)
+                # Clean up acknowledged seqs
+                for seq in to_remove:
+                    del unacknowledged_messages[seq]
 
-def tcp_rtt_times(pcap_file: str):
-    """
-    Extract RTTs from TCP packets in a pcap.
-    Returns (times, rtts) where:
-        times = list of timestamps when RTT was measured
-        rtts  = list of RTT values in milliseconds
-    """
-
-    sent_packets = {}   # (src, dst, sport, dport, seq) -> send_time
-    rtts = []
-    times = []
-
-    with open(pcap_file, "rb") as f:
-        pcap = dpkt.pcap.Reader(f)
-
-        for ts, buf in pcap:
-            try:
-                eth = dpkt.ethernet.Ethernet(buf)
-                if not isinstance(eth.data, dpkt.ip.IP):
-                    continue
-                ip = eth.data
-                if not isinstance(ip.data, dpkt.tcp.TCP):
-                    continue
-
-                tcp = ip.data
-
-                # 4-tuple to uniquely identify flow
-                flow = (ip.src, ip.dst, tcp.sport, tcp.dport)
-
-                # If data is being sent (len > 0)
-                if len(tcp.data) > 0:
-                    seq = tcp.seq
-                    # If already seen, it's a retransmission -> ignore
-                    if (flow, seq) not in sent_packets:
-                        sent_packets[(flow, seq)] = ts
-
-                # If this is an ACK
-                if (tcp.flags & dpkt.tcp.TH_ACK):
-                    ack = tcp.ack
-                    # Reverse flow (ACK comes back from other side)
-                    rev_flow = (ip.dst, ip.src, tcp.dport, tcp.sport)
-
-                    # Find if this ACK acknowledges any seq we sent
-                    to_delete = []
-                    for (f, seq), t_sent in sent_packets.items():
-                        if f == rev_flow and seq < ack:
-                            rtt = (ts - t_sent) * 1000.0  # ms
-                            rtts.append(rtt)
-                            times.append(ts)
-                            to_delete.append((f, seq))
-
-                    # cleanup acknowledged packets
-                    for key in to_delete:
-                        del sent_packets[key]
-
-            except (dpkt.UnpackError, ValueError):
-                continue
 
     return times, rtts
 
@@ -310,10 +275,10 @@ def main():
         """)
 
     if do_thpt:
-        x, y =perform_thpt(client_ip, server_ip, do_upload, pcap_filename)
+        x, y =perform_thpt(client_ip, server_ip, pcap_filename, do_upload)
     
     else:
-        x, y = perform_rtt(client_ip, server_ip, True, pcap_filename)
+        x, y = perform_rtt(client_ip, server_ip, pcap_filename,)
 
 
     if do_thpt:

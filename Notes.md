@@ -66,7 +66,7 @@
 - 10, 142, 192, 172, 
 - so you have these group people who set standards to IP and the Internet 
 - get geo location from: https://www.maxmind.com/en/geoip-web-services-demo
-
+- IP does not have acknowledment in its protocol. this is specific to tcp and hence we can use that only to produce results
 
 ## traceroute
 
@@ -100,7 +100,7 @@
 - my ip: 10.184.13.134, 2001:df4:e000:3fd1::b3ab
 - they are the same because http is an application level protocol and is does not affect the dns lookup, becuase what matters is the domain name, that establishes connection in the link layer, which is determined by the last three words in domain. what protocol is being used does not change the server, hence the ip
 - before submitting make sure to remove the hack to identify s
-
+- check the max limit of data in ping, and think over it wrt piazza and logic, wrt both ipv4,6
 - need to check the slight peek in upload?
 - if time persists explictly show each of the integers on the graph
 ## DNS
