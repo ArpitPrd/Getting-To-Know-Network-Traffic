@@ -102,7 +102,7 @@
 - before submitting make sure to remove the hack to identify s
 
 - need to check the slight peek in upload?
-
+- if time persists explictly show each of the integers on the graph
 ## DNS
 
 - this is like the phone book system
@@ -208,7 +208,8 @@ ack 1000
 ## Issues faced
 
 - pcapng is not supported by libpcap, convert it to pcap either by using save-as, or follow this link: https://stackoverflow.com/questions/23523524/dpkt-invalid-tcpdump-header-error
-
+- ipv6 has different class in dpkt
+- check the ip address every time, properly
 
 ## dpkt
 

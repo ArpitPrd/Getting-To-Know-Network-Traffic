@@ -1,9 +1,54 @@
 import dpkt
 import socket
 import matplotlib.pyplot as plt
-from collections import defaultdict
+import statistics
 import argparse
 import ipaddress
+
+def dns_query_response_times(pcap_file: str) -> float:
+    """
+    Reads a pcap file, extracts DNS query-response pairs,
+    computes response times, and returns the median response time (ms).
+    """
+    query_times = {}
+    response_times = []
+
+    with open(pcap_file, "rb") as f:
+        pcap = dpkt.pcap.Reader(f)
+
+        for ts, buf in pcap:
+            try:
+                eth_data = dpkt.ethernet.Ethernet(buf)
+                if not isinstance(eth_data.data, dpkt.ip.IP):
+                    continue
+                ip_data = eth_data.data
+                if not isinstance(ip_data.data, dpkt.udp.UDP):
+                    continue
+
+                udp_data = ip_data.data
+
+                if udp_data.sport != 53 and udp_data.dport != 53:  # DNS usually on port 53
+                    continue
+
+                dns = dpkt.dns.DNS(udp_data.data) # DNS data poured onto python object
+
+                # DNS Query
+                if dns.qr == dpkt.dns.DNS_Q:  
+                    query_times[dns.id] = ts
+
+                # DNS Response
+                elif dns.qr == dpkt.dns.DNS_R:  
+                    if dns.id in query_times:
+                        rtt = (ts - query_times[dns.id]) * 1000  # convert to ms
+                        response_times.append(rtt)
+                        del query_times[dns.id]
+
+            except (dpkt.UnpackError, ValueError):
+                continue
+
+    if not response_times:
+        return -1
+    return statistics.median(response_times)
 
 
 def get_pcap_from_file(filename:str)-> any:
@@ -57,7 +102,7 @@ def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str
     here we classify anything that has been sent out of the client to be an upload
     and anything that has been recieved by the client as download
     """
-    print(pcap_filename)
+    if verbose: print(pcap_filename)
     cnt = 0
     bin_size = 1
     ipv4 = is_ipv4(client_ip)
@@ -111,7 +156,7 @@ def perform_thpt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str
                     cnt += 1
                     clock_thpt_dict[rel_time] += len(tcp_data)
 
-    print(f"number of loads: {cnt}")
+    if verbose: print(f"number of loads: {cnt}")
     bins = sorted(clock_thpt_dict.keys())
     values = [ (clock_thpt_dict[b] * 8) / (bin_size * 1e6) for b in bins ]  # kbps
     return list(bins), list(values)
@@ -120,7 +165,7 @@ def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str)
     """
     performs rtt analysis and return time and rtt variation
     """
-    print(f"working with: client_ip: {client_ip}, server_ip: {server_ip} and pcap_filename: {pcap_filename}")
+    if verbose: print(f"working with: client_ip: {client_ip}, server_ip: {server_ip} and pcap_filename: {pcap_filename}")
     ipv4 = is_ipv4(client_ip)
     client_ip_bytes = get_bytes_from_ip(client_ip)
     server_ip_bytes = get_bytes_from_ip(server_ip)
@@ -163,9 +208,68 @@ def perform_rtt(client_ip:str, server_ip:str, do_upload:bool, pcap_filename:str)
                 key = tcp_data.ack
                 if key in to_ack:
                     clock_rtt_dict[rel_time] = rel_time - to_ack[key]
-    print(f"number of rtts recorded: {len(clock_rtt_dict)}")
+    if verbose: print(f"number of rtts recorded: {len(clock_rtt_dict)}")
     return list(clock_rtt_dict.keys()), list(clock_rtt_dict.values())
 
+def tcp_rtt_times(pcap_file: str):
+    """
+    Extract RTTs from TCP packets in a pcap.
+    Returns (times, rtts) where:
+        times = list of timestamps when RTT was measured
+        rtts  = list of RTT values in milliseconds
+    """
+
+    sent_packets = {}   # (src, dst, sport, dport, seq) -> send_time
+    rtts = []
+    times = []
+
+    with open(pcap_file, "rb") as f:
+        pcap = dpkt.pcap.Reader(f)
+
+        for ts, buf in pcap:
+            try:
+                eth = dpkt.ethernet.Ethernet(buf)
+                if not isinstance(eth.data, dpkt.ip.IP):
+                    continue
+                ip = eth.data
+                if not isinstance(ip.data, dpkt.tcp.TCP):
+                    continue
+
+                tcp = ip.data
+
+                # 4-tuple to uniquely identify flow
+                flow = (ip.src, ip.dst, tcp.sport, tcp.dport)
+
+                # If data is being sent (len > 0)
+                if len(tcp.data) > 0:
+                    seq = tcp.seq
+                    # If already seen, it's a retransmission -> ignore
+                    if (flow, seq) not in sent_packets:
+                        sent_packets[(flow, seq)] = ts
+
+                # If this is an ACK
+                if (tcp.flags & dpkt.tcp.TH_ACK):
+                    ack = tcp.ack
+                    # Reverse flow (ACK comes back from other side)
+                    rev_flow = (ip.dst, ip.src, tcp.dport, tcp.sport)
+
+                    # Find if this ACK acknowledges any seq we sent
+                    to_delete = []
+                    for (f, seq), t_sent in sent_packets.items():
+                        if f == rev_flow and seq < ack:
+                            rtt = (ts - t_sent) * 1000.0  # ms
+                            rtts.append(rtt)
+                            times.append(ts)
+                            to_delete.append((f, seq))
+
+                    # cleanup acknowledged packets
+                    for key in to_delete:
+                        del sent_packets[key]
+
+            except (dpkt.UnpackError, ValueError):
+                continue
+
+    return times, rtts
 
 def plot(x: list[float], y: list[float], xlabel: str, ylabel: str, label: str, title: str, save_loc: str, window_start: float = 3.0, window_length:float=1e9) -> None:
     """
@@ -185,11 +289,55 @@ def plot(x: list[float], y: list[float], xlabel: str, ylabel: str, label: str, t
     plt.legend()
     plt.grid(True, linestyle="--", alpha=0.6)
 
-    print(f"saving at {save_loc}")
+    if verbose: print(f"saving at {save_loc}")
     plt.tight_layout()
     plt.savefig(save_loc)
     plt.close()
  
+def main():
+    
+    if verbose:
+        print(f"""
+            client_ip = {args.client}
+            server_ip = {args.server}
+            do_thpt = {args.throughput}
+            do_upload = {args.up}
+            do_download = {args.down}
+            do_rtt = {args.rtt}
+            version = {args.version}
+            ipv6 = {args.safe}
+            verbose = {args.verbose}
+        """)
+
+    if do_thpt:
+        x, y =perform_thpt(client_ip, server_ip, do_upload, pcap_filename)
+    
+    else:
+        x, y = perform_rtt(client_ip, server_ip, True, pcap_filename)
+
+
+    if do_thpt:
+        if do_upload:
+            save_loc = f"up_throughput{"_s" if ipv6 else ""}{v}.png"
+            title = f"Upload Throughput using 1 sec bins (http{"s" if ipv6 else ""})"
+            ylabel = "Upload Throughput in Mbps"
+            label = "Upload"
+        else:
+            save_loc = f"down_throughput{"_s" if ipv6 else ""}{v}.png"
+            title = f"Download Throughput using 1 sec bins (http{"s" if ipv6 else ""})"
+            ylabel = "Download Throughput in Mbps"
+            label = "Download"
+    if do_rtt:
+        save_loc = f"rtt{"_s" if ipv6 else ""}{v}.png"
+        title = f"RTT (http{"s" if ipv6 else ""})"
+        ylabel = "RTT"
+        label = "RTT"
+
+    plot(x, y, "wall clock in sec", ylabel, label, title, save_loc, window_start=0.0, window_length=1e9)# if do_rtt else 1)
+
+def submain():
+    med = dns_query_response_times(pcap_filename)
+    print(med)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Parse an offline packet and identify stats")
@@ -203,6 +351,7 @@ if __name__ == '__main__':
     parser.add_argument("--file", type=str, help="pcap file name")
     parser.add_argument("--version", type=str, default="", help="enter verison")
     parser.add_argument("--safe", action="store_true", help="if https")
+    parser.add_argument("-v", "--verbose", action="store_true", help="increase verbosity")
     args = parser.parse_args()
     client_ip = args.client
     server_ip = args.server
@@ -213,39 +362,6 @@ if __name__ == '__main__':
     pcap_filename = args.file
     v = args.version
     ipv6 = args.safe
-    print(f"""
-        client_ip = {args.client}
-        server_ip = {args.server}
-        do_thpt = {args.throughput}
-        do_upload = {args.up}
-        do_download = {args.down}
-        do_rtt = {args.rtt}
-        version = {args.version}
-        ipv6 = {args.safe}
-    """)
-
-    if do_thpt:
-        x, y =perform_thpt(client_ip, server_ip, do_upload, pcap_filename)
-    
-    else:
-        x, y = perform_rtt(client_ip, server_ip, True, pcap_filename)
-
-
-    if do_thpt:
-        if do_upload:
-            save_loc = f"up_throughput{"_s" if ipv6 else ""}{v}.png"
-            title = f"Upload Throughput (http{"s" if ipv6 else ""})"
-            ylabel = "Upload Throughput in bits per sec"
-            label = "Upload"
-        else:
-            save_loc = f"down_throughput{"_s" if ipv6 else ""}{v}.png"
-            title = f"Download Throughput (http{"s" if ipv6 else ""})"
-            ylabel = "Download Throughput in bits per sec"
-            label = "Download"
-    if do_rtt:
-        save_loc = f"rtt{"_s" if ipv6 else ""}{v}.png"
-        title = f"RTT (http{"s" if ipv6 else ""})"
-        ylabel = "RTT"
-        label = "RTT"
-
-    plot(x, y, "wall clock", ylabel, label, title, save_loc, window_start=0.0, window_length=1e9)# if do_rtt else 1)
+    verbose = args.verbose
+    main()
+    # submain()

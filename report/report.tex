@@ -85,7 +85,7 @@ COL334: Computer Network}
 \end{figure}
 
 \begin{enumerate}
-    \item \textbf{Protocols Used}: Ping uses ICMP protocol which is on top of the IP protocol. It uses the Echo Request packet to the destination host and recieves Echo Reply packet from the same. It sits on the third layer of the protocol stack.
+    \item \textbf{Protocols Used}: Ping uses ICMP protocol. It sends the Echo Request packet to the destination host and recieves Echo Reply packet from the same. It sits on the third layer of the protocol stack, which is the network layer.
     \item \textbf{Latency}:
     \begin{enumerate}
         \item \textbf{Avg Latency of Craigslist}: 263.328 ms
@@ -94,13 +94,14 @@ COL334: Computer Network}
         \item \textbf{Reason for different latencies of websites}:
         \begin{enumerate}
             \item Google has more number of hosts than Craigslist, which splits newtwork traffic
+            \item Google's traffic might directly peer with most of the ISPs in the same tier of internet hierarchy.
             % \item Physical distance to Google's host is lesser than Craigslist's host, hence reaching the destination host earlier. (Craigslist has a host in San Fransico, whereas, Google's hosts are distributed all across the world, as well as in India, hence smaller RTT)
         \end{enumerate}
         \item \textbf{Reason for differnt latencies across pings for same website}:
         \begin{enumerate}
-            \item Length of Queue for service at destination host is not constant in time and varies according to the number of user who requested for service before, we place any request (queueing of packets, at the host)
+            \item Length of Queue for service at destination host is not constant in time and varies according to the number of user who requested for service before we place any request (queueing of packets, at the host)
             \item Network congestion is not constant, hence each switch in the network may not have same number of packets it has to route across differnt time
-            \item Differnt routes may be taken for different pings leading to different distances and hence latencies
+            \item Differnt routes may be taken for different pings leading to different paths and hence latencies
         \end{enumerate}
     \end{enumerate}
     \item using IPv6 for both websites
@@ -117,7 +118,11 @@ COL334: Computer Network}
     \begin{enumerate}
         \item How to force IPv6: pass a flag -6 to force ping to follow IPv6
         \item Result: IPv6 was supported by Google's host but not by Craigslist's host
-        \item Why $ping -6$ Failed for Craigslist's host: Since IPv6 worked for Google's host, implies that my computer and Google's host both support IPv6. If a failure of Address Family support has occured it must have occured on Craigslist's server. This implies Craigslist's server does not support IPv6 addresses
+        \item Why $ping -6$ Failed for Craigslist's host: 
+        \begin{enumerate}
+            \item Since IPv6 worked for Google's host, implies that my computer and Google's host both support IPv6. If a failure of Address Family support has occured it must have occured on Craigslist's server. This implies Craigslist's server does not support IPv6 addresses.
+            \item When checking the IPv6 address for craigslist.com using dig AAAA craigslist.com, my computer does not find any IPv6 address as can be seen from Fig. 5, hence does not know which address to resolve to. Hence, forcing ping to follow IPv6 cannot be executed.
+        \end{enumerate}
     \end{enumerate}
     \item Max size of the packets
     \begin{table}[h!]
@@ -133,10 +138,10 @@ COL334: Computer Network}
         \end{tabular}
     \end{table}
     \begin{enumerate}
-        \item Reason of Limit to Size: The network interfaces have a Maximum Transmission Unit for precautions (not to overload a server or a network device, which would disallow the timely servicing of all packets), that limit the packet size. Hence the bottleneck in the path is the device with the smallest MTU 
+        \item Reason of Limit to Size: The network interfaces have a Maximum Transmission Unit for precautions (not to overload a server or a network device, which would disallow the timely servicing of all packets), that limit the packet size. Hence the bottleneck in the path is the device with the smallest Maximum Transmission Unit 
         \item The packet size may also be limited by the OS
         \item For IPv6 over ethernet networks is limited ideally to 1500 bytes, but Table 1 shows what was practically achieved 
-        \item The difference between practical and ideal may be caused by a network device through which the packet was routed has smaller MTU.
+        \item The difference between practical and ideal may be caused by a network device through which the packet was routed has smaller Maximum Transmission Unit.
         \item To send a larger packet size, the packet must be fragmented
     \end{enumerate}
 \end{enumerate}
@@ -176,12 +181,12 @@ COL334: Computer Network}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.8\textwidth]{google_asn.png}
-        \caption{Autonomous System Number for each IP Address in the trace route of www.google.com (produces using mtr)}
+        \caption{Autonomous System Number for each IP Address in the trace route of www.google.com (produces using the tool: mtr)}
     \end{figure}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.8\textwidth]{craigslist_asn.png}
-        \caption{Autonomous System Number for each IP Address in the trace route of craigslist.com (produces using mtr)}
+        \caption{Autonomous System Number for each IP Address in the trace route of craigslist.com (produces using the tool: mtr)}
     \end{figure}
     \item Explanation for "*": Some servers do not cater to traceroute packets, for security reasons and traffic control, hence do not send the Time Exceeded packet back to the source and hence, we do not have information about this node. This is represented in the traceroute by "*"
     \item Multiple IP Addresses for the same Hop Count: $traceroute$ sends three packets for each hop. The three packets may opt for independent routes, depending on the congestion of the network. traceroute lists all the unique ip addresses of the nodes encountered by the three packets
@@ -249,7 +254,7 @@ COL334: Computer Network}
     \item Three Tier Architecture:
     \begin{enumerate}
         \item craigslist.com : Here we observe the three tier architecture clearly. Since first the packet travels from Delhi to Bangalore (which is a 2nd tier ISP transfer), then the exchange is observed from Bangalore to France and France to San Fransico which are a 1st Tier ISP Transfer. Finally 2nd and 3rd tier transfers occur for the packet to reach craigslist.com server
-        \item www.google.com : Here, we do not observe the three tier architecture clearly. Most of the transfers are through private ip addresses. From RTTs we can conclude some of these transfers are in India and the rest directly in the US. This also occurs when a collection of network devices are considered as private network and do not disclose thier actual IP Address. Google might use these private networks for data transfers, for security reasons, such as avoiding data leaks. TODO
+        \item www.google.com : Here, we do not observe the three tier architecture clearly. Most of the transfers are through private ip addresses. Google peers its packets in the same level of hierarchy. This is the reason why we observe so many regional ISPs (Unites States (US), North America).
     \end{enumerate}
 \end{enumerate}
 
@@ -258,30 +263,30 @@ COL334: Computer Network}
 \subsection{Traffic Capture}
 \renewcommand{\labelenumi}{\Alph{enumi}}
 \begin{enumerate}
-    \item Time taken for the DNS request-response to comlete: Query Time = 0.5815 and Response Time is 0.6966, time taken is \textbf{0.115}
+    \item Median Time taken for the DNS request-response to comlete: \textbf{42.43803024291992}. Note Median was taken on the pcap file when applied with the filter of DNS
     \item HTTP
     \begin{enumerate}
-        \item Number of HTTP Requests = 364 (fitler used: $http.request$)
-        \item How webpages are structured: The webpage is very modular. All images are loaded one by one on the website indicating completion of download.
-        \item How browsers render complex pages with multiple images and files: They render the images one at a time, since from the packet information it can be observed different times of completion of the downloads
+        \item Number of HTTP Requests = 363 (fitler used: $http.request$)
+        \item How webpages are structured: The webpage is structured like a tree. The root of the tree is the webpage itself. Root's children are the first level abstraction in the webpage, such as the title, the box that contains green ticks etc.. The next level with each abstraction, contains the green ticks itself in the case of the abstraction mentioned previously. 
+        \item How browsers render complex pages with multiple images and files: The browser recursively calls on the nodes of the tree (mentioned above) and fetches the required informaiton, and displays them according to their HTML Code. This way it is able to render complex images and texts. 
     \end{enumerate}
     \item TCP Connection
     \begin{enumerate}
         \item Number of TCP Connections = 31 (filter used: $tcp.flags.syn == 1 and tcp.flags.ack == 0$)
         \item Number of HTTP Conbnections==Number of TCP Connections: No, they are generally not equal, however they are related. In one TCP Connection multiple HTTP requests can be made.
-        \item Content Object Fetch over same TCP Connection: Yes, some contents get fetched over the same TCP Connection. This can be supported from the fact that HTTP transfer are made with HTTP/1.1, which implies sustained TCP Connection for multiple HTTP transfers. This was verified using the filter $tcp.flags.syn==1 and tcp.flags.ack==0$ and the we checked the upstream flow. This showed multiple HTTP/1.1 transfers in one TCP Connection
+        \item Content Object Fetch over same TCP Connection: Yes, some contents get fetched over the same TCP Connection. This can be supported from the fact that HTTP transfer are made with HTTP/1.1, which implies sustained TCP Connection for multiple HTTP transfers. This was verified using the filter $tcp.stream eq 0$ where we checked the upstream flow. This showed multiple to and fro packet flows.
         \begin{figure}[h!]
             \centering
-            \includegraphics[width=0.8\textwidth]{http_in_tcp.png}
+            \includegraphics[width=0.8\textwidth]{http_in_tcp_1.png}
         \end{figure}
     \end{enumerate}
     \item HTTPs packet trace
     \begin{enumerate}
-        \item http traffic there? No, there is no HTTP Traffic
-        \item content transfer of HTTP and JavaScript files? and why?: There is no content tranfer of HTTP and JavaScript. HTTPs is secured data transfer, therefor the file content is encrypted and hence not visible without the key to the file. This is the reason why wireshark does not show this content
-        \item dns traffic: Yes, DNS Traffic is present. DNS is required for look ups to convert web addresses to their correspoding IP Addresses.
-        \item number of tcp connections logged = 25
-        \item Number of HTTP Conbnectinos==Number of TCP Connections: They are not equal in this case. However the HTTPS case has smaller number of TCP Connections. A potential reason is multiplexing, allowing many HTTPS request to be sent simultaneously.
+        \item HTTP traffic there? No, there is no HTTP Traffic (filter used: $HTTP$)
+        \item content transfer of HTTP and JavaScript files? and why?: There is no content tranfer of HTTP and JavaScript. HTTPs is secured data transfer, therefor the file content is encrypted and hence not visible without the key to the file. This is the reason why wireshark does not show this content.
+        \item dns traffic: Yes, DNS Traffic is present. DNS is required for look ups to convert web addresses to their correspoding IP Addresses. Once the ip addresses for the websites are resolved no more DNS Traffic is present. (filter used: $dns$)
+        \item number of tcp connections logged = 7
+        \item Number of HTTP Conbnectinos==Number of TCP Connections?: They are not equal in this case. However the HTTPS case has smaller number of TCP Connections. A potential reason is multiplexing, allowing many HTTPS request to be sent simultaneously.
     \end{enumerate}
 \end{enumerate}
 
@@ -292,10 +297,12 @@ COL334: Computer Network}
         \item comparision of time taken for downloads: HTPP::17.132s and HTTPs::1.614 (93\% faster than HTTP)
         \item Observation from the plots: 
         \begin{enumerate}
-            \item The download plot for https.pcap has significant throughput for download in comparision to that for http.pcap. Since the amount of data downloaded is the same, hence if the time of download reduces, this implies throughput increases.
-            \item This can also be referred from the RTT plot. Since RTT is very small for most of the times that are plotted, we can infer the small download time in the case of htpps.pcap and larger download time in the case of http.pcap
+            \item The download plot for https.pcap has significant throughput for download in comparision to that for http.pcap. Since the amount of data downloaded is the same, hence if the time of download reduces (as inferred from the time on the website and also the x axis of the plots), this implies throughput increases. The download throughput are upto 100 times more in https than http
+            \item Time of downloads can also be justified from the RTT plot. RTT is much smaller in https.pcap case than in comparision to http.pcap. This implies smaller time for data transfers from https.pcap than http.pcap
         \end{enumerate}
-         
+         \item Assumption for RTT Plots: We assume no retransmission of signal. Hence, we confirm ACK from the receiver by matching it to the estimated Acknowledgment Number, that is, we find if A == S + L. Here A is the Acknowledgment number received from the receiver, S is the sequence number when the message in consideration was sent to the receiver from the sender and L is the number of bytes of the data.
+         \item Note: RTT values are recorded at the time of ACK of the sent message
+         \item Note: The images for throughputs have been found for each second on the wall clock
         \begin{figure}[h!]
             \centering
             \includegraphics[width=0.8\textwidth]{throughput/to_use/down_throughput.png}
@@ -324,7 +331,7 @@ COL334: Computer Network}
         \begin{figure}[h!]
             \centering
             \includegraphics[width=0.8\textwidth]{rtt/to_use/rtt_s.png}
-            \caption{RTT using http.pcap}
+            \caption{RTT using https.pcap}
         \end{figure}
     \end{enumerate}
     

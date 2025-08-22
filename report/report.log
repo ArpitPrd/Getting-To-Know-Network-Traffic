@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.8.13)  21 AUG 2025 19:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.8.13)  22 AUG 2025 12:50
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -433,42 +433,46 @@ Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_ping_6.png, id=44, 961.5925pt x 277.035pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_ping_6.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_ping_6.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_ping_6.png  used on input line 109.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_ping_6.png  used on input line 110.
 (pdftex.def)             Requested size: 375.80544pt x 108.27147pt.
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_ping_6.png, id=45, 968.61874pt x 41.15375pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_ping_6.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_ping_6.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_ping_6.png  used on input line 114.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_ping_6.png  used on input line 115.
 (pdftex.def)             Requested size: 375.80544pt x 15.967pt.
 
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+Overfull \hbox (19.60545pt too wide) in paragraph at lines 124--125
+[]\OT1/cmr/m/n/12 When check-ing the IPv6 ad-dress for craigslist.com us-ing dig AAAA craigslist.com,
+ []
 
 
 
 [2 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_ping_6.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_ping_6.png>]
-</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png, id=70, 1145.27875pt x 329.23pt>
+</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png, id=71, 1145.27875pt x 329.23pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png  used on input line 152.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png  used on input line 157.
 (pdftex.def)             Requested size: 375.80544pt x 108.03334pt.
-</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png, id=71, 1145.27875pt x 265.99374pt>
+</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png, id=72, 1145.27875pt x 265.99374pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png  used on input line 158.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png  used on input line 163.
 (pdftex.def)             Requested size: 375.80544pt x 87.28304pt.
-</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png, id=72, 913.4125pt x 593.21625pt>
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png, id=73, 913.4125pt x 593.21625pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png  used on input line 178.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png  used on input line 183.
 (pdftex.def)             Requested size: 375.80544pt x 244.06204pt.
-</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png, id=73, 913.4125pt x 593.21625pt>
+</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png, id=74, 913.4125pt x 593.21625pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png  used on input line 183.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png  used on input line 188.
 (pdftex.def)             Requested size: 375.80544pt x 244.06204pt.
 
-
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
@@ -479,85 +483,81 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 
-[3 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png>]
+[3 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_tr.png>]
+
+[4 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_tr.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png>]
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-
-[4 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/google_asn.png>]
-
-LaTeX Warning: Text page 5 contains only floats.
 
 
 
 [5 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/craigslist_asn.png>]
-Overfull \hbox (31.51762pt too wide) in paragraph at lines 270--271
+
+[6]
+Overfull \hbox (31.51762pt too wide) in paragraph at lines 275--276
 []\OT1/cmr/m/n/12 Number of TCP Con-nec-tions = 31 (fil-ter used: $\OML/cmm/m/it/12 tcp:flags:syn \OT1/cmr/m/n/12 == 1\OML/cmm/m/it/12 andtcp:flags:ack \OT1/cmr/m/n/12 ==
  []
 
-</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp.png, id=110, 1227.58624pt x 981.6675pt>
-File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp.png Graphic file (type png)
-<use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp.png  used on input line 275.
-(pdftex.def)             Requested size: 375.80544pt x 300.52408pt.
+</home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp_1.png, id=126, 1239.63126pt x 1056.94875pt>
+File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp_1.png Graphic file (type png)
+<use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp_1.png>
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp_1.png  used on input line 280.
+(pdftex.def)             Requested size: 375.80544pt x 320.40938pt.
 
 
-[6]
-
-[7 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp.png>]
+[7 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/http_in_tcp_1.png>]
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png, id=140, 462.528pt x 346.896pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png  used on input line 301.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png  used on input line 308.
 (pdftex.def)             Requested size: 375.80544pt x 281.86818pt.
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png, id=141, 462.528pt x 346.896pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png  used on input line 306.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png  used on input line 313.
 (pdftex.def)             Requested size: 375.80544pt x 281.86818pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png, id=142, 462.528pt x 346.896pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png  used on input line 311.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png  used on input line 318.
 (pdftex.def)             Requested size: 375.80544pt x 281.86818pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png, id=143, 462.528pt x 346.896pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png  used on input line 316.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png  used on input line 323.
 (pdftex.def)             Requested size: 375.80544pt x 281.86818pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png, id=144, 462.528pt x 346.896pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png  used on input line 321.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png  used on input line 328.
 (pdftex.def)             Requested size: 375.80544pt x 281.86818pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png, id=145, 462.528pt x 346.896pt>
 File: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png Graphic file (type png)
 <use /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png>
-Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png  used on input line 326.
+Package pdftex.def Info: /home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png  used on input line 333.
 (pdftex.def)             Requested size: 375.80544pt x 281.86818pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 
-[8 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png>]
+[8]
 
 LaTeX Warning: Text page 9 contains only floats.
 
@@ -566,7 +566,7 @@ Overfull \vbox (2.97298pt too high) has occurred while \output is active []
 
 
 
-[9 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png>]
+[9 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput.png>]
 
 LaTeX Warning: Text page 10 contains only floats.
 
@@ -575,9 +575,16 @@ Overfull \vbox (2.97298pt too high) has occurred while \output is active []
 
 
 
-[10 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png>]
+[10 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/down_throughput_s.png>]
 
-[11 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png>] (report.aux)
+LaTeX Warning: Text page 11 contains only floats.
+
+
+Overfull \vbox (2.97298pt too high) has occurred while \output is active []
+
+
+
+[11 </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/throughput/to_use/up_throughput_s.png> </home/arpit/Desktop/iitd/sem_7/COL334/projects/Getting-To-Know-Network-Traffic/img/rtt/to_use/rtt_s.png>] (report.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-07-20>
@@ -586,17 +593,17 @@ Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: 118EF2154853BB922F9390B106F18275;860.
  ) 
 Here is how much of TeX's memory you used:
- 12733 strings out of 468135
- 201712 string characters out of 5435616
- 638631 words of memory out of 5000000
+ 12739 strings out of 468135
+ 201772 string characters out of 5435616
+ 635631 words of memory out of 5000000
  41116 multiletter control sequences out of 15000+600000
  635588 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,638b,637s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,629b,723s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </home/arpit/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/arpit/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmmi12.pfb></home/arpit/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/arpit/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/arpit/.miktex/texmfs/install/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on report.pdf (11 pages, 752170 bytes).
+Output written on report.pdf (11 pages, 787418 bytes).
 PDF statistics:
- 221 PDF objects out of 1000 (max. 8388607)
- 87 named destinations out of 1000 (max. 500000)
+ 228 PDF objects out of 1000 (max. 8388607)
+ 93 named destinations out of 1000 (max. 500000)
  124 words of extra memory for PDF output out of 10000 (max. 10000000)
 

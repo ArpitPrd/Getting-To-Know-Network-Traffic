@@ -21,3 +21,9 @@
 ## Day 4
 
 - need to get the throughput correct, becaause it seems to be wrong
+
+## Day 5
+
+- preparing final upload
+- corrected the ipv6 issue
+- check how to get all integers on the x axis
