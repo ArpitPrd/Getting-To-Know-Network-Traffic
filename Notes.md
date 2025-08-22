@@ -38,6 +38,7 @@
 
 - ping command can be very hard on a network and must be used with caution
 - 8 header bytes for ICMP
+- use -p for padding, useful to debug with respect to a pattern
 
 ## ICMP Protocol 
 - IP (internet protocol) used for host to host interconnection in a system of networks, specifically called "catenet"

@@ -146,19 +146,21 @@ def perform_thpt(client_ip:str, server_ip:str, pcap_filename:str, do_upload:bool
 
             # need to check all the uploads happening in the tcp connection created between the server and my computer
             if do_upload:
-                if src==client_ip_bytes and dst==server_ip_bytes:
-                    cnt += 1
-                    clock_thpt_dict[rel_time] += len(tcp_data)
+                if len(tcp_data) > 0:
+                    if src==client_ip_bytes and dst==server_ip_bytes:
+                        cnt += 1
+                        clock_thpt_dict[rel_time] += len(tcp_data)
             # need to check all the uploads happening in the tcp connection created between the server and my computer
             else:
                 # print(dst, client_ip_bytes)
-                if dst==client_ip_bytes and src==server_ip_bytes: 
-                    cnt += 1
-                    clock_thpt_dict[rel_time] += len(tcp_data)
+                if len(tcp_data) > 0:
+                    if dst==client_ip_bytes and src==server_ip_bytes: 
+                        cnt += 1
+                        clock_thpt_dict[rel_time] += len(tcp_data)
 
     if verbose: print(f"number of loads: {cnt}")
     bins = sorted(clock_thpt_dict.keys())
-    values = [ (clock_thpt_dict[b] * 8) / (bin_size * 1e6) for b in bins ]  # kbps
+    values = [ (clock_thpt_dict[b] * 8) / (bin_size * (1e6 if mbps else 1e3)) for b in bins ]  # kbps
     return list(bins), list(values)
 
 
@@ -216,27 +218,32 @@ def perform_rtt(client_ip: str, server_ip: str, pcap_file: str, do_upload:bool=F
             # sending packet
             if src==client_ip_bytes and dst==server_ip_bytes:
                 if len(tcp_data.data) > 0:
-                    if seq not in unacknowledged_messages:  # first transmission only
+                    if seq not in unacknowledged_messages:  
                         unacknowledged_messages[seq] = (time_stamp, len(tcp_data.data))
 
             # receiving packet
             elif src==server_ip_bytes and dst==client_ip_bytes:
-                # Check which seqs are being acknowledged
                 to_remove = []
                 for seq, (send_time, length) in unacknowledged_messages.items():
                     if ack>=seq+length:  # data fully acknowledged, from the messages that were seen previously
-                        rtt = (time_stamp - send_time)
+                        """
+                            this also includes the data for which ack was lost.
+                            if the sent frame was lost, seq1 and seq2 (after increase) both are in the lookup table. If we get ack from this message, then this accounts for both transmission and re transmission into the rtt. Suppose message was received, but ack was not sent. In this case seq1 and seq2 both are again present in the lookup table, this type of retransmission is also accounted for. Therefore this is the perfect equation that handles it all.
+
+                            Note: it is tcp.data, because seq keeps track of data not the headers.
+                        """
+                        rtt = (time_stamp - send_time) * (1 if rtt_s else 1000)
                         times.append(rel_ts)
                         rtts.append(rtt)
                         to_remove.append(seq)
-                # Clean up acknowledged seqs
+
                 for seq in to_remove:
                     del unacknowledged_messages[seq]
 
 
     return times, rtts
 
-def plot(x: list[float], y: list[float], xlabel: str, ylabel: str, label: str, title: str, save_loc: str, window_start: float = 3.0, window_length:float=1e9) -> None:
+def plot(x: list[float], y: list[float], xlabel: str, ylabel: str, label: str, title: str, save_loc: str, window_start: float = 0.0, window_length:float=1e9) -> None:
     """
     General purpose plotter.
     """
@@ -285,17 +292,17 @@ def main():
         if do_upload:
             save_loc = f"up_throughput{"_s" if ipv6 else ""}{v}.png"
             title = f"Upload Throughput using 1 sec bins (http{"s" if ipv6 else ""})"
-            ylabel = "Upload Throughput in Mbps"
-            label = "Upload"
+            ylabel = f"Upload Throughput in {"Mbps" if mbps else "Kbps"}"
+            label = "Upload Throughput"
         else:
             save_loc = f"down_throughput{"_s" if ipv6 else ""}{v}.png"
             title = f"Download Throughput using 1 sec bins (http{"s" if ipv6 else ""})"
-            ylabel = "Download Throughput in Mbps"
-            label = "Download"
+            ylabel = f"Download Throughput in {"Mbps" if mbps else "Kbps"}"
+            label = "Download Throughput"
     if do_rtt:
         save_loc = f"rtt{"_s" if ipv6 else ""}{v}.png"
         title = f"RTT (http{"s" if ipv6 else ""})"
-        ylabel = "RTT"
+        ylabel = f"RTT in {"s" if rtt_s else "ms"}"
         label = "RTT"
 
     plot(x, y, "wall clock in sec", ylabel, label, title, save_loc, window_start=0.0, window_length=1e9)# if do_rtt else 1)
@@ -317,6 +324,8 @@ if __name__ == '__main__':
     parser.add_argument("--version", type=str, default="", help="enter verison")
     parser.add_argument("--safe", action="store_true", help="if https")
     parser.add_argument("-v", "--verbose", action="store_true", help="increase verbosity")
+    parser.add_argument("--mbps", action="store_true", help="produce plots in mbps, defautl kbps")
+    parser.add_argument("--rtt_s", action="store_true", help="produce rtt plots in s, default ms")
     args = parser.parse_args()
     client_ip = args.client
     server_ip = args.server
@@ -328,5 +337,7 @@ if __name__ == '__main__':
     v = args.version
     ipv6 = args.safe
     verbose = args.verbose
+    mbps = args.mbps
+    rtt_s = args.rtt_s
     main()
     # submain()
