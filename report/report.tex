@@ -108,7 +108,7 @@ COL334: Computer Network}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.8\textwidth]{google_ping_6.png}
-        \caption{Ten Pings to www.google.com using IPv6}
+        \caption{Ten Pings to google.com using IPv6}
     \end{figure}
     \begin{figure}[h!]
         \centering
@@ -121,9 +121,15 @@ COL334: Computer Network}
         \item \textbf{Why $ping -6$ Failed for Craigslist's host}: 
         \begin{enumerate}
             \item When checking the IPv6 address for craigslist.com using dig AAAA craigslist.com, my computer does not find any IPv6 address as can be seen from Fig. 5, hence does not know which address to resolve to. Therefore, forcing ping to follow IPv6 Addresing cannot be executed.
+            \begin{figure}[h!]
+                \centering
+                \includegraphics[width=0.8\textwidth]{craigslist_dig.png}
+                \caption{dig tool being used to find the IPv6 Address of craigslist.com}
+            \end{figure}        
             \item Also, since IPv6 worked for Google's host, implies that my computer and Google's host both support IPv6. If a failure of Address Family support has occured it must have occured on Craigslist's server. This implies Craigslist's server does not support IPv6 addresses.
         \end{enumerate}
     \end{enumerate}
+    
     \item \textbf{Max size of the packets}
     % \begin{table}[h!]
     %     \centering
@@ -132,7 +138,7 @@ COL334: Computer Network}
     %         \hline
     %         Host & Max Message Size & ICMP Header Size & Max Total Size \\
     %         \hline
-    %         www.google.com & 1462 bytes & 8 bytes & 1470 bytes \\
+    %         google.com & 1462 bytes & 8 bytes & 1470 bytes \\
     %         craigslist.com & 283 bytes & 28 bytes & 311 bytes \\
     %         \hline
     %     \end{tabular}
@@ -146,20 +152,20 @@ COL334: Computer Network}
     % \end{enumerate}
     \begin{enumerate}
         \item Max Size = 65535 bits
-        \item The length of the field - "total length" in the packet structure - which indicates the size of the payeload, 16 for both IPv4 and IPv6 Addressing in ping packets. Hence, the total payload size = $2^{16} - 1$ (the 1 excludes all bits zero) = 65535 bits. Theoretically, the protocol allows these many number of bits to be sent as data in the payload.
+        \item The length of the field - "total length" in the packet structure - which indicates the size of the payeload is 16, for both IPv4 and IPv6 Addressing in ping packets. Hence, the total payload size = $2^{16} - 1$ (the 1 excludes all bits zero, which implies zero size payload) = 65535 bits. Theoretically, the protocol allows these many number of bits to be sent as data in the payload.
     \end{enumerate}
 \end{enumerate}
 
 \subsection{traceroute}
 \begin{enumerate}
-    \item IPv4 Address for www.google.com : 172.217.26.110
+    \item IPv4 Address for google.com : 172.217.26.110
     \item IPv4 Address for craigslist.com : 208.82.238.135
 \end{enumerate}
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{google_tr.png}
-    \caption{Trace Route of sending packet to www.google.com}
+    \caption{Trace Route of sending packet to google.com}
 \end{figure}
 
 \begin{figure}[h!]
@@ -177,7 +183,7 @@ COL334: Computer Network}
             \hline
             Host & Number of Hops \\
             \hline
-            www.google.com & 17 \\
+            google.com & 17 \\
             craigslist.com & 13 \\
             \hline
         \end{tabular}
@@ -185,14 +191,14 @@ COL334: Computer Network}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.8\textwidth]{google_asn.png}
-        \caption{Autonomous System Number (denoted as ASN here) for each IP Address in the trace route of www.google.com (produces using the tool: mtr)}
+        \caption{Autonomous System Number (denoted as ASN here) for each IP Address in the trace route of google.com (produced using the tool: mtr)}
     \end{figure}
     \begin{figure}[h!]
         \centering
         \includegraphics[width=0.8\textwidth]{craigslist_asn.png}
-        \caption{Autonomous System Number (denoted as ASN here) for each IP Address in the trace route of craigslist.com (produces using the tool: mtr)}
+        \caption{Autonomous System Number (denoted as ASN here) for each IP Address in the trace route of craigslist.com (produced using the tool: mtr)}
     \end{figure}
-    \item \textbf{Explanation for "*"}: Some servers do not cater to traceroute packets, for security reasons and traffic control, hence do not send the Time Exceeded packet back to the source and hence, we do not have information about this node. This is represented in the traceroute by "*"
+    \item \textbf{Explanation for "*"}: Some servers do not cater to traceroute packets, for security reasons and traffic control, hence do not send the Time Exceeded packet back to the source and hence, we do not have information about this node. This node is represented in the traceroute by "*"
     \item \textbf{Multiple IP Addresses for the same Hop Count}: $traceroute$ sends three packets for each hop. The three packets may opt for independent routes, depending on the congestion of the network. traceroute lists all the unique ip addresses of the nodes encountered by the three packets
     \item The following tables (Table 2 for google.com and Table 3 for craigslist.com) \textbf{lists the IP Addresses and their correspoding RTTs and Geolocations}
     \begin{table}[h!]
@@ -267,8 +273,8 @@ COL334: Computer Network}
     \end{table}
 
     \begin{enumerate}
-        \item \textbf{For google.com} : most of the network devices that relay the packet are private and hence no information is obtained about them. However we observe a delta in 9th hop, therefore we can assume that the packet has crossed the country.
-        \item \textbf{For craigslist.com} : The bigger deltas are observed when there is a change in country. For eg., from Table 4, we observe that upto Bangalore the RTT was 5.77 ms but as the relay proceeded to the US, the RTT becomes signficanly higher, 197.05 ms. 
+        \item \textbf{For google.com} : most of the network devices that relay the packet are private and hence very less information is obtained about them. However we observe a delta in 5th hop, therefore we can assume that the packet has crossed the country and can be confirmed with RTTs in later hops.
+        \item \textbf{For craigslist.com} : The bigger deltas in RTT are observed when there is a change in country. For eg., from Table 3, we observe that upto Bangalore the RTT was 5.77 ms but as the relay proceeded to the US, the RTT becomes signficanly higher, 197.05 ms. (Here, Geolocation is referenced from Maxmind Database)
     \end{enumerate}
 
     Hence, from the above explanation, the data intuitively makes sense.
@@ -285,12 +291,12 @@ COL334: Computer Network}
 \subsection{Traffic Capture}
 \renewcommand{\labelenumi}{\Alph{enumi}}
 \begin{enumerate}
-    \item \textbf{Median Time taken} for the DNS request-response to comlete: \textbf{42.438s}. Note Median was taken on query response times observed in the pcap file when applied with the filter of DNS. (This was done using python script, code present in traffic\_analysis.py)
+    \item \textbf{Median Time taken} for the DNS request-response to comlete: \textbf{42.438ms}. \textbf{Note}: Median was taken on query response times observed in the pcap file when applied with the filter of DNS. (This was done using python script, code present in traffic\_analysis.py)
     \item \textbf{HTTP}
     \begin{enumerate}
         \item \textbf{Number of HTTP Requests} = 363 (fitler used: $http.request$)
         \item \textbf{How webpages are structured}: The webpage is structured like a tree. The root of the tree is the webpage itself. Root's children are the first level abstraction in the webpage, such as the title, the box that contains green ticks (as present in the website httpvshttps.com) etc.. The next level with each abstraction, contains the green ticks itself, in the case of the abstraction mentioned previously. 
-        \item \textbf{How browsers render complex pages with multiple images and files}: The browser recursively calls on the nodes of the tree (mentioned above) and fetches the required informaiton, and displays them according to their HTML Code. This way it is able to render complex images and texts. 
+        \item \textbf{How browsers render complex pages with multiple images and files}: The browser recursively calls on the nodes of the tree (mentioned above) and fetches the required informaiton, and displays them according to their HTML Code. This way it is able to render complex images and texts. This was observed from the way images were downloaded and logged onto the wireshark framework
     \end{enumerate}
     \item \textbf{TCP Connection}
     \begin{enumerate}
@@ -319,10 +325,10 @@ COL334: Computer Network}
         \item \textbf{Comparision of time taken for downloads}: HTPP::17.132s and HTTPs::1.614 (93\% faster than HTTP)
         \item \textbf{Observation from the plots}: 
         \begin{enumerate}
-            \item The download plot for https.pcap has significant throughput for download in comparision to that for http.pcap. Since the amount of data downloaded is the same, hence if the time of download reduces (as inferred from the time on the website and also the x axis of the plots), this implies throughput increases. The download throughput are upto 100 times more in https than http
-            \item Time of downloads can also be justified from the RTT plot. RTT is much smaller in https.pcap case than in comparision to http.pcap. This implies smaller time for data transfers from https.pcap than http.pcap
+            \item The download plot for https.pcap has significant throughput for download in comparision to that for http.pcap. Since the amount of data downloaded is the same, if the time of download reduces (as inferred from the time on the website and also the x axis of the plots), the throughput    increases. The download throughput are upto 100 times more in https than http
+            \item Time of downloads can also be justified from the RTT plot. RTT is in general, across all times on wall clock, smaller in https.pcap case than in comparision to http.pcap. This implies smaller time for data transfers from https.pcap than http.pcap
         \end{enumerate}
-         \item \textbf{Assumption for RTT Plots}: We assume no retransmission of signal. Hence, we confirm ACK from the receiver by matching it to the estimated Acknowledgment Number, that is, we find if A == S + L. Here A is the Acknowledgment number received from the receiver, S is the sequence number when the message in consideration was sent to the receiver from the sender and L is the number of bytes of the data.
+         \item \textbf{Assumption for RTT Plots}: We consider the completion of Round Trips for all those messages (with sequence number S and length L) that are stored in senders memory in list of pending ACKs from receiver, when an Acknowledgment Message is received from the receiver at the sender containing Acknowledgment Number A s.t., $A >= S + L$. This accounts for retransmission in all cases, either the packet getting lost when transferring upstream or downstream when receiving ACK.
          \item \textbf{Note}: RTT values are recorded at the time of ACK of the sent message
          \item \textbf{Note}: The images for throughputs have been found for each second {1, 2, 3, ...} on the wall clock
         \begin{figure}[h!]

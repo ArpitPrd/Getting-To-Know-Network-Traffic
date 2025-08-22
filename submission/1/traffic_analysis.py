@@ -5,7 +5,7 @@ import statistics
 import argparse
 import ipaddress
 
-def get_dns_query_response_times(pcap_file: str) -> float:
+def dns_query_response_times(pcap_file: str) -> float:
     """
     Reads a pcap file, extracts DNS query-response pairs,
     computes response times, and returns the median response time (ms).
@@ -294,7 +294,7 @@ def main():
     plot(x, y, "wall clock in sec", ylabel, label, title, save_loc, window_start=0.0, window_length=1e9)# if do_rtt else 1)
 
 def submain():
-    med = get_dns_query_response_times(pcap_filename)
+    med = dns_query_response_times(pcap_filename)
     print(med)
 
 if __name__ == '__main__':
