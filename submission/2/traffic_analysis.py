@@ -23,21 +23,20 @@ def get_dns_query_response_times(pcap_file: str) -> float:
             if not isinstance(ip_data.data, dpkt.udp.UDP):continue
 
             udp_data = ip_data.data
-            sport = udp_data.sport
-            dport = udp_data.dport
-            if sport != 53 and dport != 53:continue
+
+            if udp_data.sport != 53 and udp_data.dport != 53:continue
 
             dns_data = dpkt.dns.DNS(udp_data.data) # DNS data poured onto python object
 
-            qr = dns_data.qr
-            id = dns_data.id
-            if qr == dpkt.dns.DNS_Q: id_to_time_lookup[id] = time_stamp
+            # DNS Query
+            if dns_data.qr == dpkt.dns.DNS_Q: id_to_time_lookup[dns_data.id] = time_stamp
 
-            elif qr == dpkt.dns.DNS_R:  
-                if id in id_to_time_lookup:
-                    rtt = (time_stamp - id_to_time_lookup[id]) * (1 if rtt_s else 1000)
+            # DNS Response
+            elif dns_data.qr == dpkt.dns.DNS_R:  
+                if dns_data.id in id_to_time_lookup:
+                    rtt = (time_stamp - id_to_time_lookup[dns_data.id]) * (1 if rtt_s else 1000)
                     response_times.append(rtt)
-                    del id_to_time_lookup[id]
+                    del id_to_time_lookup[dns_data.id]
 
 
     return statistics.median(response_times)
